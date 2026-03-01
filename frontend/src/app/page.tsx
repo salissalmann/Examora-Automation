@@ -201,76 +201,83 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 font-sans">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-black text-white selection:bg-orange-500/30 font-sans antialiased">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12 space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <div className="mb-16 space-y-4 text-center lg:text-left">
+          <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl text-white">
             Examora <span className="text-orange-600">WhatsApp</span>
           </h1>
-          <p className="text-lg text-slate-500 dark:text-slate-400">
-            Send targeted university prep messages via WhatsApp. Connect your device and dispatch campaigns instantly.
+          <p className="text-xl text-zinc-400 max-w-2xl">
+            Deliver targeted university prep directly via WhatsApp. Connect instantly and dispatch your campaigns.
           </p>
         </div>
 
         {/* Main Grid */}
-        <div className="grid gap-8 lg:grid-cols-2 mb-12">
+        <div className="grid gap-8 lg:grid-cols-2 mb-20">
           {/* Left Column: Connection Status */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 border-2 border-orange-600/20 p-6 rounded shadow-sm">
-              <div className="mb-6 flex items-center justify-between">
+            <div className="bg-zinc-950 border border-zinc-800 p-8 rounded shadow-2xl">
+              <div className="mb-8 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="text-xl font-bold">Device Connection</h2>
+                  <h2 className="text-2xl font-bold">Device Connection</h2>
                   <div className="flex items-center gap-2">
-                    <div className={`h-2.5 w-2.5 rounded-full ${connected ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`} />
-                    <span className="text-sm text-slate-500 dark:text-slate-400">
+                    <div className={`h-2.5 w-2.5 rounded-full ${connected ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]'}`} />
+                    <span className="text-sm font-medium text-zinc-400">
                       {connected ? 'Session Active' : 'Waiting for QR Scan...'}
                     </span>
                   </div>
                 </div>
-                <Smartphone className={`h-6 w-6 ${connected ? 'text-green-500' : 'text-orange-600'}`} />
+                <div className={`p-3 rounded border border-zinc-800 ${connected ? 'text-green-500 bg-green-500/5' : 'text-orange-600 bg-orange-600/5'}`}>
+                  <Smartphone className="h-6 w-6" />
+                </div>
               </div>
 
-              <div className="flex min-h-[280px] flex-col items-center justify-center rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-6">
+              <div className="flex min-h-[320px] flex-col items-center justify-center rounded border border-zinc-800 bg-black p-8 relative overflow-hidden group">
+                {/* Subtle Grid Background */}
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
                 {loadingQr ? (
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="h-48 w-48 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Initializing connection...</p>
+                  <div className="flex flex-col items-center gap-6 z-10">
+                    <div className="h-48 w-48 animate-pulse rounded bg-zinc-900 border border-zinc-800" />
+                    <p className="text-sm text-zinc-500 font-medium">Initializing connection...</p>
                   </div>
                 ) : connected ? (
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div className="rounded-full bg-green-100 p-4 dark:bg-green-950">
-                      <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
+                  <div className="flex flex-col items-center gap-6 text-center z-10">
+                    <div className="rounded-full bg-green-500/10 border border-green-500/20 p-6 animate-in zoom-in-50 duration-500">
+                      <CheckCircle2 className="h-16 w-16 text-green-500" />
                     </div>
-                    <h3 className="text-xl font-bold text-green-600 dark:text-green-400">Connected!</h3>
-                    <p className="max-w-xs text-sm text-slate-500 dark:text-slate-400">
-                      Your WhatsApp account is ready. You can now send campaigns.
-                    </p>
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-bold text-white">Connected!</h3>
+                      <p className="max-w-xs text-sm text-zinc-400 font-medium">
+                        Your WhatsApp account is ready. You can now send campaigns.
+                      </p>
+                    </div>
                   </div>
                 ) : qrCode ? (
-                  <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col items-center gap-6 z-10">
                     {qrCode.length > 2000 ? (
-                      <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 p-4 rounded text-red-600 dark:text-red-400 flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4" />
-                        <p className="text-sm">QR code data too large. Please restart the backend.</p>
+                      <div className="bg-red-500/5 border border-red-500/20 p-4 rounded text-red-500 flex items-center gap-3">
+                        <AlertCircle className="h-5 w-5" />
+                        <p className="text-sm font-bold">QR data too large. Restart backend.</p>
                       </div>
                     ) : (
                       <>
-                        <div className="rounded bg-white p-4 shadow-lg dark:bg-slate-800">
-                          <QRCode value={qrCode} size={200} />
+                        <div className="rounded bg-white p-6 shadow-[0_0_50px_rgba(255,255,255,0.05)] border border-white/10 group-hover:scale-[1.02] transition-transform duration-500">
+                          <QRCode value={qrCode} size={220} />
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-                          Open WhatsApp → Linked Devices → Link a Device
+                        <p className="text-xs text-zinc-500 font-medium tracking-wide uppercase">
+                          Scan with WhatsApp on your phone
                         </p>
                       </>
                     )}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div className="rounded-full bg-orange-100 dark:bg-orange-950/30 p-4">
+                  <div className="flex flex-col items-center gap-6 text-center z-10">
+                    <div className="rounded-full bg-orange-600/10 border border-orange-600/20 p-6">
                       <MessageSquare className="h-8 w-8 text-orange-600" />
                     </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Generating QR code...</p>
+                    <p className="text-sm text-zinc-500 font-medium uppercase tracking-widest">Generating QR code...</p>
                   </div>
                 )}
               </div>
@@ -279,40 +286,42 @@ export default function Home() {
 
           {/* Right Column: Send Form */}
           <div className="space-y-6">
-            <div className={`bg-white dark:bg-slate-900 border-2 transition-all rounded shadow-sm ${connected ? 'border-orange-600/20 p-6' : 'border-slate-200 dark:border-slate-800 p-6 opacity-50'}`}>
-              <div className="mb-6 flex items-center justify-between">
+            <div className={`bg-zinc-950 border transition-all duration-700 rounded shadow-2xl p-8 ${connected ? 'border-zinc-800 ring-1 ring-orange-600/10' : 'border-zinc-900 opacity-50'}`}>
+              <div className="mb-8 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="text-xl font-bold">Campaign Dispatch</h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Send university-specific messages</p>
+                  <h2 className="text-2xl font-bold">Campaign Dispatch</h2>
+                  <p className="text-sm text-zinc-400 font-medium">Deploy university-specific content</p>
                 </div>
-                <Send className="h-6 w-6 text-orange-600" />
+                <div className="p-3 rounded border border-zinc-800 text-orange-600 bg-orange-600/5">
+                  <Send className="h-6 w-6" />
+                </div>
               </div>
 
-              <form onSubmit={handleSendMessage} className="space-y-6">
-                <div className="space-y-2">
-                  <label htmlFor="university" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              <form onSubmit={handleSendMessage} className="space-y-8">
+                <div className="space-y-3">
+                  <label htmlFor="university" className="text-xs font-bold text-zinc-500 uppercase tracking-widest px-1">
                     Target University
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <select
                       id="university"
                       value={university}
                       onChange={(e) => setUniversity(e.target.value)}
                       disabled={!connected}
-                      className="w-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded p-2.5 text-base appearance-none focus:outline-none focus:border-orange-600/50"
+                      className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded p-4 text-base appearance-none focus:outline-none focus:border-orange-600/50 focus:ring-1 focus:ring-orange-600/20 transition-all font-medium text-white"
                     >
                       {universities.map((u) => (
-                        <option key={u.id} value={u.id}>
+                        <option key={u.id} value={u.id} className="bg-zinc-950 text-white">
                           {u.name}
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500 pointer-events-none group-focus-within:text-orange-600 transition-colors" />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="phone" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <div className="space-y-3">
+                  <label htmlFor="phone" className="text-xs font-bold text-zinc-500 uppercase tracking-widest px-1">
                     Phone Number
                   </label>
                   <input
@@ -322,16 +331,17 @@ export default function Home() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     disabled={!connected}
-                    className="w-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded p-2.5 text-base focus:outline-none focus:border-orange-600/50"
+                    className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded p-4 text-base focus:outline-none focus:border-orange-600/50 focus:ring-1 focus:ring-orange-600/20 transition-all placeholder:text-zinc-700 font-sans font-medium text-white"
                     required
                   />
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Format: country code + number (e.g., 923001234567)</p>
+                  <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-tight px-1">Format: Country code + Number</p>
                 </div>
 
                 {/* Template Preview */}
-                <div className="rounded border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
-                  <p className="mb-2 text-xs font-semibold text-slate-500 dark:text-slate-400">MESSAGE PREVIEW</p>
-                  <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap line-clamp-6">
+                <div className="rounded border border-zinc-800 bg-black p-5 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 h-1 w-20 bg-orange-600/20 rounded-bl" />
+                  <p className="mb-3 text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Message Preview</p>
+                  <p className="text-xs leading-relaxed text-zinc-300 font-medium whitespace-pre-wrap line-clamp-[8]">
                     {templates[university as keyof typeof templates]}
                   </p>
                 </div>
@@ -339,29 +349,29 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={sending || !connected}
-                  className="w-full h-12 text-base font-semibold bg-orange-600 hover:bg-orange-700 text-white rounded flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-14 text-sm font-bold uppercase tracking-widest bg-orange-600 hover:bg-orange-700 text-white rounded flex items-center justify-center transition-all duration-300 active:scale-[0.98] disabled:opacity-30 disabled:hover:bg-orange-600 disabled:cursor-not-allowed shadow-[0_10px_30px_rgba(234,88,12,0.15)]"
                 >
                   {sending ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Dispatching...
                     </>
                   ) : (
                     <>
                       <Send className="mr-2 h-4 w-4" />
-                      Dispatch Message
+                      Dispatch Campaign
                     </>
                   )}
                 </button>
 
                 {sendStatus && (
-                  <div className={`p-4 rounded border flex items-center gap-3 ${sendStatus.success ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800 text-green-800 dark:text-green-200' : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800 text-red-800 dark:text-red-200'}`}>
+                  <div className={`p-4 rounded border flex items-center gap-4 animate-in slide-in-from-top-2 duration-300 ${sendStatus.success ? 'bg-green-500/5 border-green-500/20 text-green-500' : 'bg-red-500/5 border-red-500/20 text-red-500'}`}>
                     {sendStatus.success ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0" />
+                      <CheckCircle2 className="h-5 w-5 shrink-0" />
                     ) : (
-                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      <AlertCircle className="h-5 w-5 shrink-0" />
                     )}
-                    <p className="text-sm">{sendStatus.message}</p>
+                    <p className="text-sm font-bold">{sendStatus.message}</p>
                   </div>
                 )}
               </form>
@@ -370,41 +380,38 @@ export default function Home() {
         </div>
 
         {/* Template Library */}
-        <div className="space-y-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-3xl font-bold">Template Library</h2>
-              <p className="mt-1 text-slate-500 dark:text-slate-400">Browse and copy university campaign messages</p>
+        <div className="space-y-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-zinc-900 pb-10">
+            <div className="space-y-1">
+              <h2 className="text-4xl font-bold">Template Library</h2>
+              <p className="text-zinc-500 uppercase tracking-tighter text-sm font-bold">University Campaign Directory</p>
             </div>
-            <div className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1 rounded text-sm font-medium w-fit">
+            <div className="bg-zinc-900 border border-zinc-800 text-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-widest">
               {universities.length} Templates
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {universities.map((uni) => (
-              <div key={uni.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded hover:border-orange-600/30 transition-colors shadow-sm">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="font-bold uppercase tracking-wider text-sm">{uni.name}</h3>
+              <div key={uni.id} className="bg-zinc-950 border border-zinc-900 p-6 rounded hover:border-zinc-700 transition-all duration-500 group relative">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <h3 className="font-black uppercase tracking-tight text-white mb-1">{uni.name}</h3>
+                    <div className="h-0.5 w-8 bg-orange-600/30 group-hover:w-full transition-all duration-700" />
+                  </div>
                   <button
                     onClick={() => copyToClipboard(uni.id, templates[uni.id])}
-                    className={`px-3 py-1 rounded flex items-center gap-1.5 transition-all text-xs font-medium border ${copiedId === uni.id ? 'bg-green-600 border-green-600 text-white' : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    className={`p-2 rounded flex items-center justify-center transition-all duration-300 border ${copiedId === uni.id ? 'bg-green-600 border-green-600 text-white' : 'border-zinc-800 text-zinc-500 hover:border-zinc-500 hover:text-white bg-black'}`}
                   >
                     {copiedId === uni.id ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        Copied!
-                      </>
+                      <Check className="h-4 w-4 animate-in zoom-in-50" />
                     ) : (
-                      <>
-                        <Copy className="h-3.5 w-3.5" />
-                        Copy
-                      </>
+                      <Copy className="h-4 w-4" />
                     )}
                   </button>
                 </div>
-                <div className="max-h-32 overflow-y-auto rounded bg-slate-50 dark:bg-slate-950 p-3 border border-slate-100 dark:border-slate-800">
-                  <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400 whitespace-pre-wrap">
+                <div className="max-h-40 overflow-y-auto rounded bg-black border border-zinc-900 p-4 scrollbar-hide">
+                  <p className="text-xs leading-[1.8] text-zinc-400 font-medium whitespace-pre-wrap">
                     {templates[uni.id]}
                   </p>
                 </div>
