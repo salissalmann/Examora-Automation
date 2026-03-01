@@ -4,7 +4,8 @@
   --color-examora-orange: #fd5900;
   --color-examora-light: #faf9f5;
   --color-examora-dark: #000000;
-  --color-examora-dark-card: rgb(12, 14, 25);
+  --color-examora-dark-card: #09090b;
+  /* Zinc 950 for better nexjs look */
   --color-examora-text-light: #0A0A0A;
   --color-examora-text-dark: #FFFFFF;
 
@@ -14,38 +15,40 @@
   --color-pm-red: #E33C49;
   --color-pm-purple: #5D5DEC;
 
+  /* Shadcn standard tokens */
+  --color-background: var(--color-examora-dark);
+  --color-foreground: var(--color-examora-text-dark);
+  --color-card: var(--color-examora-dark-card);
+  --color-card-foreground: var(--color-examora-text-dark);
+  --color-popover: var(--color-examora-dark-card);
+  --color-popover-foreground: var(--color-examora-text-dark);
+  --color-primary: var(--color-examora-orange);
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #27272a;
+  /* Zinc 800 */
+  --color-secondary-foreground: #FFFFFF;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+  --color-accent: #27272a;
+  --color-accent-foreground: #FFFFFF;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #FFFFFF;
+  --color-border: #27272a;
+  --color-input: #27272a;
+  --color-ring: var(--color-examora-orange);
+
   --font-poppins: var(--font-poppins), sans-serif;
   --font-rubik: var(--font-rubik), sans-serif;
+
+  --radius-lg: 0.5rem;
+  --radius-md: calc(var(--radius-lg) - 2px);
+  --radius-sm: calc(var(--radius-lg) - 4px);
 }
 
 @layer base {
-  :root {
-    --background: var(--color-examora-light);
-    --foreground: var(--color-examora-text-light);
-    --card-background: #ffffff;
-    --border-color: #e5e7eb;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: var(--color-examora-dark);
-      --foreground: var(--color-examora-text-dark);
-      --card-background: var(--color-examora-dark-card);
-      --border-color: #1f2937;
-    }
-  }
-
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    @apply font-poppins selection:bg-examora-orange selection:text-white antialiased transition-colors duration-300;
-  }
-}
-
-@layer utilities {
-  .glass-card {
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    @apply shadow-sm backdrop-blur-md;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply font-poppins selection:bg-orange-500/30 selection:text-white antialiased;
   }
 }
