@@ -1,5 +1,6 @@
 const { withCors } = require('../lib/middleware');
 const { getStatus, sendMessage } = require('../lib/whatsapp');
+const templates = require('../lib/templates');
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -10,16 +11,16 @@ async function handler(req, res) {
     return res.status(503).json({ success: false, error: 'WhatsApp is not connected.' });
   }
 
-  const { name, phone } = req.body;
+  const { phone, university } = req.body;
 
-  if (!name || !phone) {
-    return res.status(400).json({ success: false, error: 'Name and phone number are required.' });
+  if (!phone || !university) {
+    return res.status(400).json({ success: false, error: 'Phone and university are required.' });
   }
 
-  const messageTemplate = `Hello ${name}, this is a message from our system.`;
+  const message = templates[university.toLowerCase()] || templates.generic;
 
   try {
-    await sendMessage(phone, messageTemplate);
+    await sendMessage(phone, message);
     res.json({ success: true, message: 'Message sent successfully!' });
   } catch (error) {
     console.error(error);
