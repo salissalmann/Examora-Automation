@@ -3,7 +3,7 @@ services:
     name: whatsapp-qr-backend
     env: node
     plan: free # or starter
-    buildCommand: npm install
+    buildCommand: npm install && npx puppeteer browsers install chrome
     startCommand: npm start
     envVars:
       - key: PORT
