@@ -12,8 +12,12 @@ const initializeWhatsApp = () => {
     authStrategy: new LocalAuth(),
     puppeteer: {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      handleSIGINT: false,
     },
   });
+
+  console.log(`Puppeteer Cache Dir: ${process.env.PUPPETEER_CACHE_DIR || 'default'}`);
+
 
   client.on('qr', (qr) => {
     console.log('QR RECEIVED - Scan with your phone.');
