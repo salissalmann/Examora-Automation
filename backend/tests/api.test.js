@@ -101,22 +101,22 @@ describe('WhatsApp Backend API', () => {
 
             const response = await request(app)
                 .post('/api/send')
-                .send({ name: 'John Doe', phone: '1234567890' });
+                .send({ university: 'nust', phone: '1234567890' });
 
             expect(response.status).toBe(503);
             expect(response.body).toEqual({ success: false, error: 'WhatsApp is not connected.' });
         });
 
-        it('should fail with 400 if name or phone is missing', async () => {
+        it('should fail with 400 if university or phone is missing', async () => {
             getStatus.mockReturnValue(true);
 
             // Missing phone
             const res1 = await request(app)
                 .post('/api/send')
-                .send({ name: 'John Doe' });
+                .send({ university: 'nust' });
             expect(res1.status).toBe(400);
 
-            // Missing name
+            // Missing university
             const res2 = await request(app)
                 .post('/api/send')
                 .send({ phone: '1234567890' });
@@ -129,11 +129,11 @@ describe('WhatsApp Backend API', () => {
 
             const response = await request(app)
                 .post('/api/send')
-                .send({ name: 'Jane', phone: '0987654321' });
+                .send({ university: 'nust', phone: '0987654321' });
 
             expect(response.status).toBe(200);
             expect(response.body).toEqual({ success: true, message: 'Message sent successfully!' });
-            expect(sendMessage).toHaveBeenCalledWith('0987654321', 'Hello Jane, this is a message from our system.');
+            expect(sendMessage).toHaveBeenCalledWith('0987654321', expect.stringContaining('NUST'));
         });
 
         it('should fail with 500 when sendMessage throws an error', async () => {
@@ -142,7 +142,7 @@ describe('WhatsApp Backend API', () => {
 
             const response = await request(app)
                 .post('/api/send')
-                .send({ name: 'Jane', phone: '0987654321' });
+                .send({ university: 'nust', phone: '0987654321' });
 
             expect(response.status).toBe(500);
             expect(response.body).toEqual({ success: false, error: 'Failed to send message.' });

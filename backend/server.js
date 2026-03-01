@@ -7,8 +7,12 @@ const { initializeWhatsApp } = require('./lib/whatsapp');
 const app = express();
 const port = process.env.PORT || 3001;
 
+// Trust the first proxy (Render, Vercel, etc.)
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(express.json());
+
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
