@@ -36,6 +36,7 @@ const universities = [
   { id: 'comsats', name: 'COMSATS' },
   { id: 'uet', name: 'UET' },
   { id: 'mehran', name: 'Mehran' },
+  { id: 'ned', name: 'NED' },
 ];
 
 const templates: Record<string, string> = {
@@ -135,7 +136,20 @@ Practice with university-level MCQs on Examora.
 
 💰 Invite friends & earn 15% commision on each sale too!
 
-Join → www.examora.io`
+Join → www.examora.io`,
+
+  ned: `Preparing for NED? 🎯
+
+Don't practice random MCQs.
+Prepare with Examora's NED-specific mocks & past paper simulations.
+
+✔ Real NED Pattern Tests  
+✔ Topic-wise Practice  
+✔ FREE Trial  
+
+💰 Invite friends & earn 15% commision on each sale too!
+
+Start now → www.examora.io`
 };
 
 export default function Home() {
