@@ -8,15 +8,17 @@ let isConnected = false;
 const initializeWhatsApp = () => {
   console.log('Initializing WhatsApp Client...');
 
+  const cacheDir = process.env.PUPPETEER_CACHE_DIR || 'default';
+  console.log(`Puppeteer Cache Dir: ${cacheDir}`);
+
   client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       handleSIGINT: false,
+      executablePath: process.env.CHROME_PATH || undefined,
     },
   });
-
-  console.log(`Puppeteer Cache Dir: ${process.env.PUPPETEER_CACHE_DIR || 'default'}`);
 
 
   client.on('qr', (qr) => {
