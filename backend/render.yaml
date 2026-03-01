@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: whatsapp-qr-backend
+    env: node
+    plan: free # or starter
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+    # Added persistent disk to save WhatsApp session
+    disk:
+      name: whatsapp-session
+      mountPath: /opt/render/project/src/backend/.wwebjs_auth
+      sizeGB: 1

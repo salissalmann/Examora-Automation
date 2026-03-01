@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-examora-orange: #fd5900;
+  --color-examora-light: #faf9f5;
+  --color-examora-dark: #000000;
+  --color-examora-dark-card: rgb(12, 14, 25);
+  --color-examora-text-light: #0A0A0A;
+  --color-examora-text-dark: #FFFFFF;
+
+  --color-pm-blue: #4285F4;
+  --color-pm-green: #7DD9A5;
+  --color-pm-yellow: #FC951E;
+  --color-pm-red: #E33C49;
+  --color-pm-purple: #5D5DEC;
+
+  --font-poppins: var(--font-poppins), sans-serif;
+  --font-rubik: var(--font-rubik), sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: var(--color-examora-light);
+    --foreground: var(--color-examora-text-light);
+    --card-background: #ffffff;
+    --border-color: #e5e7eb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: var(--color-examora-dark);
+      --foreground: var(--color-examora-text-dark);
+      --card-background: var(--color-examora-dark-card);
+      --border-color: #1f2937;
+    }
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply font-poppins selection:bg-examora-orange selection:text-white antialiased transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    @apply shadow-sm backdrop-blur-md;
+  }
+}
