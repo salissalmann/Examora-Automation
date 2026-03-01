@@ -3,7 +3,7 @@ services:
     name: whatsapp-qr-backend
     env: node
     plan: free # or starter
-    buildCommand: npm install && npx puppeteer browsers install chrome
+    buildCommand: npm install && PUPPETEER_CACHE_DIR=./.puppeteer npx puppeteer browsers install chrome
     startCommand: npm start
     envVars:
       - key: PORT
@@ -11,7 +11,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: PUPPETEER_CACHE_DIR
-        value: /opt/render/.cache/puppeteer
+        value: ./.puppeteer
     # Added persistent disk to save WhatsApp session
     disk:
       name: whatsapp-session

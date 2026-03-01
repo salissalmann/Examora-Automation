@@ -4,11 +4,11 @@
   "description": "WhatsApp QR serverless API for Vercel",
   "main": "server.js",
   "scripts": {
-    "start": "PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer node server.js",
+    "start": "PUPPETEER_CACHE_DIR=./.puppeteer node server.js",
     "dev": "node server.js",
     "test": "jest --verbose",
     "test:watch": "jest --watch",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "postinstall": "PUPPETEER_CACHE_DIR=./.puppeteer npx puppeteer browsers install chrome"
   },
   "type": "commonjs",
   "dependencies": {
