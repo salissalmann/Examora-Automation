@@ -10,6 +10,8 @@ services:
         value: 3001
       - key: NODE_ENV
         value: production
+      - key: PUPPETEER_CACHE_DIR
+        value: /opt/render/project/src/.cache/puppeteer
     # Added persistent disk to save WhatsApp session
     disk:
       name: whatsapp-session
