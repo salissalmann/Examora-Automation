@@ -1,58 +1,72 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode');
+const {
+  default: makeWASocket,
+  useMultiFileAuthState,
+  DisconnectReason,
+} = require('@whiskeysockets/baileys');
+const pino = require('pino');
 
-let client;
+let sock;
 let currentQR = '';
 let isConnected = false;
+let reconnecting = false;
 
-const initializeWhatsApp = () => {
-  console.log('Initializing WhatsApp Client...');
+const initializeWhatsApp = async () => {
+  if (reconnecting) return;
+  reconnecting = true;
 
-  const cacheDir = process.env.PUPPETEER_CACHE_DIR || 'default';
-  console.log(`Puppeteer Cache Dir: ${cacheDir}`);
+  console.log('Initializing WhatsApp Client (Baileys)...');
 
-  client = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      handleSIGINT: false,
-      executablePath: process.env.CHROME_PATH || undefined,
-    },
-  });
+  try {
+    const { state, saveCreds } = await useMultiFileAuthState('./auth_info');
 
+    sock = makeWASocket({
+      auth: state,
+      printQRInTerminal: false,
+      logger: pino({ level: 'silent' }),
+    });
 
-  client.on('qr', (qr) => {
-    console.log('QR RECEIVED - Scan with your phone.');
-    currentQR = qr;
-  });
+    sock.ev.on('creds.update', saveCreds);
 
-  client.on('ready', () => {
-    console.log('Client is ready!');
-    currentQR = '';
-    isConnected = true;
-  });
+    sock.ev.on('connection.update', (update) => {
+      const { connection, lastDisconnect, qr } = update;
 
-  client.on('authenticated', () => {
-    console.log('AUTHENTICATED SUCCESSFULLY');
-  });
+      if (qr) {
+        console.log('QR RECEIVED - Scan with your phone.');
+        currentQR = qr;
+      }
 
-  client.on('auth_failure', (msg) => {
-    console.error('AUTHENTICATION FAILURE', msg);
-    isConnected = false;
-    currentQR = '';
-  });
+      if (connection === 'close') {
+        isConnected = false;
+        currentQR = '';
+        reconnecting = false;
 
-  client.on('disconnected', (reason) => {
-    console.log('Client was logged out', reason);
-    isConnected = false;
-    currentQR = '';
-    client
-      .destroy()
-      .then(() => client.initialize())
-      .catch(() => client.initialize());
-  });
+        const statusCode =
+          lastDisconnect?.error?.output?.statusCode;
+        const shouldReconnect =
+          statusCode !== DisconnectReason.loggedOut;
 
-  client.initialize();
+        console.log(
+          'Connection closed. Status:',
+          statusCode,
+          'Reconnecting:',
+          shouldReconnect
+        );
+
+        if (shouldReconnect) {
+          setTimeout(() => initializeWhatsApp(), 3000);
+        }
+      } else if (connection === 'open') {
+        console.log('Client is ready!');
+        currentQR = '';
+        isConnected = true;
+        reconnecting = false;
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize WhatsApp:', error);
+    reconnecting = false;
+    setTimeout(() => initializeWhatsApp(), 5000);
+  }
 };
 
 const getQR = async () => {
@@ -63,11 +77,11 @@ const getQR = async () => {
 const getStatus = () => isConnected;
 
 const sendMessage = async (phone, text) => {
-  if (!isConnected) throw new Error('WhatsApp is not connected.');
+  if (!isConnected || !sock) throw new Error('WhatsApp is not connected.');
   const formattedPhone = phone.replace(/\D/g, '');
-  const chatId = `${formattedPhone}@c.us`;
+  const chatId = `${formattedPhone}@s.whatsapp.net`;
   try {
-    return await client.sendMessage(chatId, text);
+    return await sock.sendMessage(chatId, { text });
   } catch (error) {
     console.error('Failed to send message', error);
     throw error;

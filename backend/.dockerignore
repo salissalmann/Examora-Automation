@@ -1,0 +1,10 @@
+node_modules
+.wwebjs_auth
+auth_info
+.puppeteer
+.env
+.git
+*.md
+tests
+jest.config.js
+render.yaml

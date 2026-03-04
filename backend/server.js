@@ -21,16 +21,17 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
-initializeWhatsApp();
-
 app.all('/api/qr', require('./api/qr'));
 app.all('/api/status', require('./api/status'));
 app.all('/api/send', require('./api/send'));
 
 if (require.main === module) {
-  app.listen(port, () => {
+  app.listen(port, async () => {
     console.log(`Server running on http://localhost:${port}`);
+    await initializeWhatsApp();
   });
+} else {
+  initializeWhatsApp();
 }
 
 module.exports = app;

@@ -161,8 +161,36 @@ export default function Home() {
   const [sending, setSending] = useState(false);
   const [sendStatus, setSendStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [backendError, setBackendError] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  // Uses Next.js rewrites to proxy /api/* to the backend — no CORS issues
+  const API_URL = '';
+
+  // Restore session state from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const savedConnected = sessionStorage.getItem('wa_connected');
+      const savedQr = sessionStorage.getItem('wa_qr');
+      if (savedConnected === 'true') setConnected(true);
+      if (savedQr) setQrCode(savedQr);
+    } catch {
+      // sessionStorage unavailable (SSR or private browsing)
+    }
+  }, []);
+
+  // Persist state to sessionStorage whenever it changes
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('wa_connected', String(connected));
+      if (qrCode) {
+        sessionStorage.setItem('wa_qr', qrCode);
+      } else {
+        sessionStorage.removeItem('wa_qr');
+      }
+    } catch {
+      // sessionStorage unavailable
+    }
+  }, [connected, qrCode]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -176,23 +204,23 @@ export default function Home() {
 
         if (!isSubscribed) return;
 
+        setBackendError(false);
         setConnected(data.connected);
         if (data.qr) {
           setQrCode(data.qr);
         } else if (data.connected) {
           setQrCode(null);
         }
-      } catch (err) {
-        // Silent error handling
+      } catch {
+        if (isSubscribed) setBackendError(true);
       } finally {
         if (isSubscribed) setLoadingQr(false);
       }
     };
 
     fetchStatus();
-    if (!connected) {
-      interval = setInterval(fetchStatus, 5000);
-    }
+    // Poll faster when waiting for QR, slower when connected
+    interval = setInterval(fetchStatus, connected ? 15000 : 3000);
 
     return () => {
       isSubscribed = false;
@@ -274,7 +302,19 @@ export default function Home() {
                 {/* Subtle Grid Background */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
-                {loadingQr ? (
+                {backendError && !connected ? (
+                  <div className="flex flex-col items-center gap-6 text-center z-10">
+                    <div className="rounded-full bg-red-500/10 border border-red-500/20 p-6">
+                      <AlertCircle className="h-10 w-10 text-red-500" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-bold text-red-400">Backend Unreachable</h3>
+                      <p className="max-w-xs text-xs text-muted-foreground font-medium">
+                        Cannot connect to the WhatsApp server. Make sure the backend is running.
+                      </p>
+                    </div>
+                  </div>
+                ) : loadingQr ? (
                   <div className="flex flex-col items-center gap-6 z-10">
                     <div className="h-48 w-48 animate-pulse rounded-md bg-muted border border-border" />
                     <p className="text-sm text-muted-foreground font-medium">Initializing connection...</p>
