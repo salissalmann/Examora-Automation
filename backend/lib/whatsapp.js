@@ -23,11 +23,13 @@ const initializeWhatsApp = async () => {
       auth: state,
       printQRInTerminal: false,
       logger: pino({ level: 'silent' }),
+      browser: ['Ubuntu', 'Chrome', '20.0.04'],
     });
 
     sock.ev.on('creds.update', saveCreds);
 
-    sock.ev.on('connection.update', (update) => {
+    let attempt405 = 0;
+    sock.ev.on('connection.update', async (update) => {
       const { connection, lastDisconnect, qr } = update;
 
       if (qr) {
@@ -40,10 +42,8 @@ const initializeWhatsApp = async () => {
         currentQR = '';
         reconnecting = false;
 
-        const statusCode =
-          lastDisconnect?.error?.output?.statusCode;
-        const shouldReconnect =
-          statusCode !== DisconnectReason.loggedOut;
+        const statusCode = lastDisconnect?.error?.output?.statusCode;
+        const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
 
         console.log(
           'Connection closed. Status:',
@@ -53,6 +53,30 @@ const initializeWhatsApp = async () => {
         );
 
         if (shouldReconnect) {
+          if (statusCode === 405) {
+            attempt405++;
+            if (attempt405 >= 3) {
+              console.log('Persistent 405 error. Clearing session data...');
+              const fs = require('fs');
+              const path = require('path');
+              const authDir = path.join(__dirname, '../auth_info');
+              if (fs.existsSync(authDir)) {
+                fs.rmSync(authDir, { recursive: true, force: true });
+              }
+              attempt405 = 0;
+            }
+          }
+          const delay = statusCode === 405 ? 10000 : 3000;
+          console.log(`Retrying connection in ${delay / 1000}s...`);
+          setTimeout(() => initializeWhatsApp(), delay);
+        } else if (statusCode === DisconnectReason.loggedOut) {
+          console.log('Logged out. Clearing session data...');
+          const fs = require('fs');
+          const path = require('path');
+          const authDir = path.join(__dirname, '../auth_info');
+          if (fs.existsSync(authDir)) {
+            fs.rmSync(authDir, { recursive: true, force: true });
+          }
           setTimeout(() => initializeWhatsApp(), 3000);
         }
       } else if (connection === 'open') {
@@ -60,6 +84,7 @@ const initializeWhatsApp = async () => {
         currentQR = '';
         isConnected = true;
         reconnecting = false;
+        attempt405 = 0;
       }
     });
   } catch (error) {
